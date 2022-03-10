@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class = "contain">
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+          <img src="{{ movies.image.url }}", alt="{{ movies.name }}" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+          <h3 >{{ movies.name }}</h3>
+          <p>{{ movies.description }}</p>
+          <h5>Directed By: {{ movies.director }}</h5>
+          <h5>Release Date: {{ movies.release_date }}</h5>
+          <h5>Average Rating: {{ average }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<div class="card">
+  <div class="card-body">
+    <h3>Comments</h3>
+    <form action="{% url 'movie_site:add_review' movies.id %}" method="POST">{% csrf_token %}
+      <label for="comment">Review</label>
+      <textarea name="comment" id="comment" cols="30" rows="5" class="form-control"></textarea>
+
+      <label for="rating">Rating</label>
+      <input type="range" id="rangeInput" name="rating" min="0" max="10" step="0.5"  value="0" oninput="amount.value=rangeInput.value">
+
+      <output name="amount" id="amount" for="rangeInput">0</output>
+
+      <br>
+      <input type="submit" name="inp" value="Post" class="btn btn-danger" placeholder="Enter your review">
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+      {% for y in reviews %}
+      <div class="card" style="background-color: #f5eeee;">
+        <div class="row">
+          <div class="col-md-3">
+            <h4 class="text-left">{{ y.user }}</h4>
+            <h5>Rating : {{ y.rating }}</h5>
+            {% if request.user == y.user %}
+            <a class="btn btn-outline-primary" role="button" href="{% url 'movie_site:edit_review' movies.id y.id %}">Edit</a>
+            <a class="btn btn-outline-danger" role="button" href="{% url 'movie_site:delete_review' movies.id y.id %}">Delete</a>
+            {% endif %}
+          </div>
+          <div class="col-md-7">
+            <p>{{ y.comment }}</p>
+          </div>
+          <div class="col-md-2">
+            <h5>{{ y.sentiment }}</h5>
+          </div>
+        </div>
+      </div>
+    <br>
+      {% endfor %}
+  </div>
+</div>
+
+
+{% endblock %}
